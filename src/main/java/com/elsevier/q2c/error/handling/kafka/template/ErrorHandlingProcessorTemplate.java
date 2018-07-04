@@ -11,33 +11,31 @@ import com.elsevier.q2c.error.handling.kafka.compiler.ErrorHandlingStreamCompile
 import com.elsevier.q2c.error.handling.kafka.processor.ErrorHandlingProcessor;
 import com.elsevier.q2c.error.handling.kafka.util.ErrorHandlingUtils;
 
-public abstract class ErrorHandlingProcessorTemplate<V extends SpecificRecord> 
-				extends ErrorHandlingProcessor<V> implements ErrorHandlingProcessorTemplateInterface<V> {
+public abstract class ErrorHandlingProcessorTemplate<FromValueType extends SpecificRecord, SuccessValueType extends SpecificRecord> 
+				extends ErrorHandlingProcessor<FromValueType, SuccessValueType> 
+				implements ErrorHandlingProcessorTemplateInterface<FromValueType> {
 
 	@Autowired
-	ErrorHandlingStreamCompiler<V> streamCompiler;
+	ErrorHandlingStreamCompiler<FromValueType> streamCompiler;
 	
-	public KStream<String, V> createStreamForInitialTry(StreamsBuilder builderInitialTrySteamBuilder) {
-		KStream<String, V> kStream = builderInitialTrySteamBuilder.stream(getConsumeFrom(), 
-											Consumed.with(Serdes.String(), eventSerde));
-		kStream = enableInitialTryHandling(streamCompiler.stream(kStream));
-		return kStream;
+	public KStream<String, ? extends SpecificRecord> createStreamForInitialTry(StreamsBuilder builderInitialTrySteamBuilder) {
+		KStream<String, FromValueType> kStream = builderInitialTrySteamBuilder.stream(getConsumeFrom(), 
+											Consumed.with(Serdes.String(), eventSerdeFrom));
+		return enableInitialTryHandling(streamCompiler.stream(kStream));
 	}
 	
-	public KStream<String, V> createStreamForFirstRetry(StreamsBuilder builderRetry1SteamBuilder) {
-		KStream<String, V> kStreamRetry1 = builderRetry1SteamBuilder.stream(
+	public KStream<String, ? extends SpecificRecord> createStreamForFirstRetry(StreamsBuilder builderRetry1SteamBuilder) {
+		KStream<String, FromValueType> kStreamRetry1 = builderRetry1SteamBuilder.stream(
 				ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat("-retry1.t"), 
-				Consumed.with(Serdes.String(), eventSerde));
-		kStreamRetry1 = enableRetry1Handling(streamCompiler.stream(kStreamRetry1));
-		return kStreamRetry1;
+				Consumed.with(Serdes.String(), eventSerdeFrom));
+		return enableRetry1Handling(streamCompiler.stream(kStreamRetry1));
 	}
 	
-	public KStream<String, V> createStreamForSecondRetry(StreamsBuilder builderRetry2SteamBuilder) {
-		KStream<String, V> kStreamRetry2 = builderRetry2SteamBuilder.stream(
+	public KStream<String, ? extends SpecificRecord> createStreamForSecondRetry(StreamsBuilder builderRetry2SteamBuilder) {
+		KStream<String, FromValueType> kStreamRetry2 = builderRetry2SteamBuilder.stream(
 				ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat("-retry2.t"), 
-				Consumed.with(Serdes.String(), eventSerde));
-		kStreamRetry2 = enableRetry2Handling(streamCompiler.stream(kStreamRetry2));
-		return kStreamRetry2;
+				Consumed.with(Serdes.String(), eventSerdeFrom));
+		return enableRetry2Handling(streamCompiler.stream(kStreamRetry2));
 	}
 	
 }

@@ -10,31 +10,39 @@ import com.elsevier.q2c.error.handling.kafka.util.ErrorHandlingUtils;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 
-public abstract class ErrorHandlingProcessor<V extends SpecificRecord> implements ErrorHandlingProcessorInterface<V> {
+public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecord, 
+											SuccessValueType extends SpecificRecord> 
+				implements ErrorHandlingProcessorInterface<FromValueType, SuccessValueType> {
 
 	@Autowired
-	public SpecificAvroSerde<V> eventSerde;
+	public SpecificAvroSerde<FromValueType> eventSerdeFrom;
 	
-	public KStream<String, V> enableInitialTryHandling(KStream<String, V> kStream) {
+	@Autowired
+	public SpecificAvroSerde<SuccessValueType> eventSerdeSuccess;
+	
+	public KStream<String, ? extends SpecificRecord> enableInitialTryHandling(KStream<String, ? extends SpecificRecord> kStream) {
 		return enablingErrorHandling(kStream, "-retry1.t");
 	}
 
-	public KStream<String, V> enableRetry1Handling(KStream<String, V> kStream) {
+	public KStream<String, ? extends SpecificRecord> enableRetry1Handling(KStream<String, ? extends SpecificRecord> kStream) {
 		return enablingErrorHandling(kStream, "-retry2.t");
 	}
 
-	public KStream<String, V> enableRetry2Handling(KStream<String, V> kStream) {
+	public KStream<String, ? extends SpecificRecord> enableRetry2Handling(KStream<String, ? extends SpecificRecord> kStream) {
 		return enablingErrorHandling(kStream, "-dlq.t");
 	}
 
 	@SuppressWarnings("unchecked")
-	private KStream<String, V> enablingErrorHandling(KStream<String, V> kStream, String topicSuffix) {
-		KStream<String, V>[] branches = kStream.branch(getSuccessPredicate(), getFailurePredicate(),
-				getFailbackPredicate());
+	private KStream<String, ? extends SpecificRecord> enablingErrorHandling(KStream<String, 
+																	? extends SpecificRecord> kStream,
+																String topicSuffix) {
+		KStream<String, ? extends SpecificRecord>[] branches = kStream.branch(getSuccessPredicate(), 
+																			  getFailurePredicate(),
+																			  getFailbackPredicate());
 		// forward to proper topics
-		branches[0].to(getTargetTopicSuccess(), Produced.with(Serdes.String(), eventSerde));
-		branches[1].to(ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(topicSuffix),
-				Produced.with(Serdes.String(), eventSerde));
+		((KStream<String, SuccessValueType>)branches[0]).to(getTargetTopicSuccess(), Produced.with(Serdes.String(), eventSerdeSuccess));
+		((KStream<String, FromValueType>)branches[1]).to(ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(topicSuffix),
+				Produced.with(Serdes.String(), eventSerdeFrom));
 		return kStream;
 	}
 }

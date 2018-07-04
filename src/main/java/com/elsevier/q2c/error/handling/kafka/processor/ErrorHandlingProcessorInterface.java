@@ -4,19 +4,20 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Predicate;
 
-public interface ErrorHandlingProcessorInterface<V extends SpecificRecord> {
+public interface ErrorHandlingProcessorInterface<FromValueType extends SpecificRecord, 
+												 SuccessValueType extends SpecificRecord> {
 	
-	KStream<String, V> enableInitialTryHandling(KStream<String, V> kStream);
+	KStream<String, ? extends SpecificRecord> enableInitialTryHandling(KStream<String, ? extends SpecificRecord> kStream);
 	
-	KStream<String, V> enableRetry1Handling(KStream<String, V> kStream);
+	KStream<String, ? extends SpecificRecord> enableRetry1Handling(KStream<String, ? extends SpecificRecord> kStream);
 	
-	KStream<String, V> enableRetry2Handling(KStream<String, V> kStream);
+	KStream<String, ? extends SpecificRecord> enableRetry2Handling(KStream<String, ? extends SpecificRecord> kStream);
 	
-	Predicate<? super String, ? super V> getSuccessPredicate();
+	Predicate<? super String, ? super SpecificRecord> getSuccessPredicate();
 	
-	Predicate<? super String, ? super V> getFailurePredicate();
+	Predicate<? super String, ? super SpecificRecord> getFailurePredicate();
 	
-	Predicate<? super String, ? super V> getFailbackPredicate();
+	Predicate<? super String, ? super SpecificRecord> getFailbackPredicate();
 	
 	String getTargetTopicSuccess();
 	
