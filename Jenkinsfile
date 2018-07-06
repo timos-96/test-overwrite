@@ -15,6 +15,7 @@ pipeline {
                sh 'mvn -e -X -B -DskipTests clean install'
            }
        }
+       /*
        stage('Test') {
            steps {
                sh 'mvn test'
@@ -25,5 +26,6 @@ pipeline {
                }
            }
        }
+       */
    }
 }
