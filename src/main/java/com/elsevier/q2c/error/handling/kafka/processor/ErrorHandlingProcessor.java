@@ -13,6 +13,12 @@ import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecord, 
 											SuccessValueType extends SpecificRecord> 
 				implements ErrorHandlingProcessorInterface<FromValueType, SuccessValueType> {
+	
+	public static String RETRY1_SUFFIX = ".retry1";
+	
+	public static String RETRY2_SUFFIX = ".retry2";
+	
+	public static String DLQ_SUFFIX = ".dlq";
 
 	@Autowired
 	public SpecificAvroSerde<FromValueType> eventSerdeFrom;
@@ -21,15 +27,15 @@ public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecor
 	public SpecificAvroSerde<SuccessValueType> eventSerdeSuccess;
 	
 	public KStream<String, ? extends SpecificRecord> enableInitialTryHandling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, "-retry1.t");
+		return enablingErrorHandling(kStream, RETRY1_SUFFIX);
 	}
 
 	public KStream<String, ? extends SpecificRecord> enableRetry1Handling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, "-retry2.t");
+		return enablingErrorHandling(kStream, RETRY2_SUFFIX);
 	}
 
 	public KStream<String, ? extends SpecificRecord> enableRetry2Handling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, "-dlq.t");
+		return enablingErrorHandling(kStream, DLQ_SUFFIX);
 	}
 
 	@SuppressWarnings("unchecked")

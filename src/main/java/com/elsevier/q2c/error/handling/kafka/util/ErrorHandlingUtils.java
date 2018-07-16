@@ -10,15 +10,15 @@ public class ErrorHandlingUtils {
 	}
 	
 	public static String getRetry1TopicFor(String topic) {
-		return removeDotTSuffix(topic).concat("-retry1.t");
+		return removeDotTSuffix(topic).concat(".retry1");
 	}
 	
 	public static String getRetry2TopicFor(String topic) {
-		return removeDotTSuffix(topic).concat("-retry2.t");
+		return removeDotTSuffix(topic).concat(".retry2");
 	}
 	
 	public static String getDlqTopicFor(String topic) {
-		return removeDotTSuffix(topic).concat("-dlq.t");
+		return removeDotTSuffix(topic).concat(".dlq");
 	}
 
 }
