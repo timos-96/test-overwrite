@@ -20,7 +20,13 @@ public interface ErrorHandlingProcessorInterface<FromValueType extends SpecificR
 	Predicate<? super String, ? super SpecificRecord> getFailbackPredicate();
 	
 	String getTargetTopicSuccess();
-	
+
 	String getConsumeFrom();
+
+	String getRetry1Topic();
+
+	String getRetry2Topic();
+
+	String getDlqTopic();
 
 }
