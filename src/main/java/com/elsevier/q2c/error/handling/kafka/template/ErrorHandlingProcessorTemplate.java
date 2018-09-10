@@ -25,15 +25,13 @@ public abstract class ErrorHandlingProcessorTemplate<FromValueType extends Speci
 	}
 	
 	public KStream<String, ? extends SpecificRecord> createStreamForFirstRetry(StreamsBuilder builderRetry1SteamBuilder) {
-		KStream<String, FromValueType> kStreamRetry1 = builderRetry1SteamBuilder.stream(
-				ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(ErrorHandlingProcessor.RETRY1_SUFFIX), 
+		KStream<String, FromValueType> kStreamRetry1 = builderRetry1SteamBuilder.stream(getRetry1Topic(),
 				Consumed.with(Serdes.String(), eventSerdeFrom));
 		return enableRetry1Handling(streamCompiler.stream(kStreamRetry1));
 	}
 	
 	public KStream<String, ? extends SpecificRecord> createStreamForSecondRetry(StreamsBuilder builderRetry2SteamBuilder) {
-		KStream<String, FromValueType> kStreamRetry2 = builderRetry2SteamBuilder.stream(
-				ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(ErrorHandlingProcessor.RETRY2_SUFFIX), 
+		KStream<String, FromValueType> kStreamRetry2 = builderRetry2SteamBuilder.stream(getRetry2Topic(),
 				Consumed.with(Serdes.String(), eventSerdeFrom));
 		return enableRetry2Handling(streamCompiler.stream(kStreamRetry2));
 	}

@@ -27,28 +27,42 @@ public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecor
 	public SpecificAvroSerde<SuccessValueType> eventSerdeSuccess;
 	
 	public KStream<String, ? extends SpecificRecord> enableInitialTryHandling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, RETRY1_SUFFIX);
+		return enablingErrorHandling(kStream, getRetry1Topic());
 	}
 
 	public KStream<String, ? extends SpecificRecord> enableRetry1Handling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, RETRY2_SUFFIX);
+		return enablingErrorHandling(kStream, getRetry2Topic());
 	}
 
 	public KStream<String, ? extends SpecificRecord> enableRetry2Handling(KStream<String, ? extends SpecificRecord> kStream) {
-		return enablingErrorHandling(kStream, DLQ_SUFFIX);
+		return enablingErrorHandling(kStream, getDlqTopic());
 	}
 
 	@SuppressWarnings("unchecked")
 	private KStream<String, ? extends SpecificRecord> enablingErrorHandling(KStream<String, 
 																	? extends SpecificRecord> kStream,
-																String topicSuffix) {
+																String errorTopic) {
 		KStream<String, ? extends SpecificRecord>[] branches = kStream.branch(getSuccessPredicate(), 
 																			  getFailurePredicate(),
 																			  getFailbackPredicate());
 		// forward to proper topics
 		((KStream<String, SuccessValueType>)branches[0]).to(getTargetTopicSuccess(), Produced.with(Serdes.String(), eventSerdeSuccess));
-		((KStream<String, FromValueType>)branches[1]).to(ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(topicSuffix),
-				Produced.with(Serdes.String(), eventSerdeFrom));
+		((KStream<String, FromValueType>)branches[1]).to(errorTopic, Produced.with(Serdes.String(), eventSerdeFrom));
 		return kStream;
+	}
+
+	@Override
+	public String getRetry1Topic() {
+		return ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(RETRY1_SUFFIX);
+	}
+
+	@Override
+	public String getRetry2Topic() {
+		return ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(RETRY2_SUFFIX);
+	}
+
+	@Override
+	public String getDlqTopic() {
+		return ErrorHandlingUtils.removeDotTSuffix(getConsumeFrom()).concat(DLQ_SUFFIX);
 	}
 }
