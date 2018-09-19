@@ -8,8 +8,4 @@ interface ErrorHandlingProcessorTemplateInterface<V extends SpecificRecord> {
 	
 	KStream<String, ? extends SpecificRecord> createStreamForInitialTry(StreamsBuilder builderInitialTrySteamBuilder);
 	
-	KStream<String, ? extends SpecificRecord> createStreamForFirstRetry(StreamsBuilder builderRetry1SteamBuilder);
-	
-	KStream<String, ? extends SpecificRecord> createStreamForSecondRetry(StreamsBuilder builderRetry2SteamBuilder);
-
 }
