@@ -8,9 +8,15 @@
 	<!-- Artifact specification -->
 	<!-- ============================================================= -->
 
-	<groupId>com.elsevier.q2c</groupId>
 	<artifactId>kafka-error-handling</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.0.0</version>
+  
+  <parent>
+    <groupId>com.elsevier.q2c</groupId>
+    <artifactId>shared-parent</artifactId>
+    <version>1.1.1</version>
+    <relativePath />
+  </parent>
 
 	<!-- ============================================================= -->
 	<!-- Properties -->
@@ -18,15 +24,9 @@
 
 	<properties>
 
-		<!-- Spring Boot default profile in order to use an embedded database mvn 
-			spring-boot:run -Drun.profiles=foo,bar <run.profiles>dev</run.profiles> -->
-
 		<!-- ============================================================= -->
 		<!-- Dependency Versions -->
 		<!-- ============================================================= -->
-
-		<java-version>10</java-version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<lombok-version>1.16.22</lombok-version>
 
@@ -50,14 +50,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot-version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 
 			<dependency>
 				<groupId>io.confluent</groupId>
@@ -103,8 +95,6 @@
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io-version}</version>
 			</dependency>
-			
-			
 			
 		 	<dependency>
 				<groupId>org.eclipse.jetty</groupId>
@@ -360,85 +350,5 @@
 			<url>http://packages.confluent.io/maven/</url>
 		</repository>
 	</repositories>
-
-	<!-- ============================================================= -->
-	<!-- Build -->
-	<!-- ============================================================= -->
-
-	<build>
-
-		<pluginManagement>
-			<plugins>
-				<!-- Core plugins -->
-				<plugin>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<!--<version>${maven.compiler.plugin.version}</version> -->
-				</plugin>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<!--<version>${maven.resources.plugin.version}</version> -->
-				</plugin>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.avro</groupId>
-					<artifactId>avro-maven-plugin</artifactId>
-					<version>${avro-version}</version>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.avro
-										</groupId>
-										<artifactId>
-											avro-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.8.2,)
-										</versionRange>
-										<goals>
-											<goal>schema</goal>
-											<goal>protocol</goal>
-											<goal>idl-protocol</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java-version}</source>
-					<target>${java-version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

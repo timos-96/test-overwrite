@@ -9,10 +9,6 @@ public interface ErrorHandlingProcessorInterface<FromValueType extends SpecificR
 	
 	KStream<String, ? extends SpecificRecord> enableInitialTryHandling(KStream<String, ? extends SpecificRecord> kStream);
 	
-	KStream<String, ? extends SpecificRecord> enableRetry1Handling(KStream<String, ? extends SpecificRecord> kStream);
-	
-	KStream<String, ? extends SpecificRecord> enableRetry2Handling(KStream<String, ? extends SpecificRecord> kStream);
-	
 	Predicate<? super String, ? super SpecificRecord> getSuccessPredicate();
 	
 	Predicate<? super String, ? super SpecificRecord> getFailurePredicate();
@@ -20,7 +16,9 @@ public interface ErrorHandlingProcessorInterface<FromValueType extends SpecificR
 	Predicate<? super String, ? super SpecificRecord> getFailbackPredicate();
 	
 	String getTargetTopicSuccess();
-	
+
 	String getConsumeFrom();
+
+	String getDlqTopic();
 
 }
