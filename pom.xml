@@ -10,13 +10,13 @@
 
 	<artifactId>kafka-error-handling</artifactId>
 	<version>2.0.1-SNAPSHOT</version>
-  
-  <parent>
-    <groupId>com.elsevier.q2c</groupId>
-    <artifactId>shared-parent</artifactId>
-    <version>1.1.1</version>
-    <relativePath />
-  </parent>
+
+	<parent>
+		<groupId>com.elsevier.q2c</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>1.1.1</version>
+		<relativePath />
+	</parent>
 
 	<!-- ============================================================= -->
 	<!-- Properties -->
@@ -36,6 +36,8 @@
 		<avro-version>1.8.2</avro-version>
 		<confluent-version>4.1.1</confluent-version>
 		<commons-io-version>2.6</commons-io-version>
+
+		<schema-avro-dlq.version>1.0.0-SNAPSHOT</schema-avro-dlq.version>
 
 		<jetty.version>9.2.24.v20180105</jetty.version>
 
@@ -71,32 +73,32 @@
 				<artifactId>kafka-streams-avro-serde</artifactId>
 				<version>${confluent-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro</artifactId>
 				<version>${avro-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.kafka</groupId>
 				<artifactId>kafka-streams</artifactId>
 				<version>${kafka-streams-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io-version}</version>
 			</dependency>
-			
-		 	<dependency>
+
+			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-annotations</artifactId>
 				<version>${jetty.version}</version>
@@ -136,12 +138,12 @@
 				<artifactId>apache-jsp</artifactId>
 				<version>${jetty.version}</version>
 			</dependency>
- 			<dependency>
+			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-jmx</artifactId>
 				<version>${jetty.version}</version>
 			</dependency>
-	 		<dependency>
+			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-plus</artifactId>
 				<version>${jetty.version}</version>
@@ -195,8 +197,13 @@
 				<groupId>org.eclipse.jetty.websocket</groupId>
 				<artifactId>websocket-server</artifactId>
 				<version>${jetty.version}</version>
-			</dependency>			
-			
+			</dependency>
+			<dependency>
+				<groupId>com.elsevier.q2c</groupId>
+				<artifactId>schema-avro-dlq</artifactId>
+				<version>${schema-avro-dlq.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -205,23 +212,28 @@
 	<!-- ============================================================= -->
 
 	<dependencies>
-	
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jmx</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-			</dependency>
-				<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-security</artifactId>
-			</dependency>
+
+		<dependency>
+			<groupId>com.elsevier.q2c</groupId>
+			<artifactId>schema-avro-dlq</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jmx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-security</artifactId>
+		</dependency>
 
 		<!-- Java Dependencies -->
 
@@ -259,7 +271,7 @@
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-streams</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
@@ -302,7 +314,7 @@
 			<artifactId>kafka-schema-registry-client</artifactId>
 			<version>${confluent-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
@@ -328,7 +340,7 @@
 			<artifactId>jersey-guava</artifactId>
 			<version>2.26-b03</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
