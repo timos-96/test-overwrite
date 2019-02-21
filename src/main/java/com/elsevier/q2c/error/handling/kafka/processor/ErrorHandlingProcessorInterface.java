@@ -20,5 +20,7 @@ public interface ErrorHandlingProcessorInterface<FromValueType extends SpecificR
 	String getConsumeFrom();
 
 	String getDlqTopic();
+	
+	String getServiceName();
 
 }

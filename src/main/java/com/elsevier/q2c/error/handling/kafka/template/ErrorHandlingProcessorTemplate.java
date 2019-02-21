@@ -20,6 +20,9 @@ public abstract class ErrorHandlingProcessorTemplate<FromValueType extends Speci
 	public KStream<String, ? extends SpecificRecord> createStreamForInitialTry(StreamsBuilder builderInitialTrySteamBuilder) {
 		KStream<String, FromValueType> kStream = builderInitialTrySteamBuilder.stream(getConsumeFrom(), 
 											Consumed.with(Serdes.String(), eventSerdeFrom));
+		// set the sourceTopic and serviceName on the compiler, so they may be used by the wraptoDlqEvent()
+		streamCompiler.setSourceTopic(getConsumeFrom());
+		streamCompiler.setServiceName(getServiceName());
 		return enableInitialTryHandling(streamCompiler.stream(kStream));
 	}
 	

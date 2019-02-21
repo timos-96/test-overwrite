@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.elsevier.q2c.error.handling.kafka.util.ErrorHandlingUtils;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecord, 
 											SuccessValueType extends SpecificRecord> 
 				implements ErrorHandlingProcessorInterface<FromValueType, SuccessValueType> {
@@ -34,8 +36,12 @@ public abstract class ErrorHandlingProcessor<FromValueType extends SpecificRecor
 																			  getFailurePredicate(),
 																			  getFailbackPredicate());
 		// forward to proper topics
-		((KStream<String, SuccessValueType>)branches[0]).to(getTargetTopicSuccess(), Produced.with(Serdes.String(), eventSerdeSuccess));
-		((KStream<String, FromValueType>)branches[1]).to(errorTopic, Produced.with(Serdes.String(), eventSerdeFrom));
+		((KStream<String, SuccessValueType>)branches[0])
+							 .peek((k, v) -> log.debug("Sending event {} to topic {}", v, getTargetTopicSuccess()))
+							 .to(getTargetTopicSuccess(), Produced.with(Serdes.String(), eventSerdeSuccess));
+		((KStream<String, FromValueType>)branches[1])
+							 .peek((k, v) -> log.debug("Sending event {} to topic {}", v, errorTopic))					
+							 .to(errorTopic, Produced.with(Serdes.String(), eventSerdeFrom));
 		return kStream;
 	}
 
