@@ -37,7 +37,7 @@
 		<confluent-version>4.1.1</confluent-version>
 		<commons-io-version>2.6</commons-io-version>
 
-		<schema-avro-dlq.version>1.0.0-SNAPSHOT</schema-avro-dlq.version>
+		<schema-avro-dlq.version>1.0.0</schema-avro-dlq.version>
 
 		<jetty.version>9.2.24.v20180105</jetty.version>
 
